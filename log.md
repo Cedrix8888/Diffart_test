@@ -1,0 +1,1 @@
+in colab test, AutoencoderKL and UNet2DConditionModel should use torch_dtype rather than dtype
