@@ -15,7 +15,7 @@ from utils import download_model # type: ignore
 
 def gen_trans(width: int = 1024,
               height: int = 1024,
-              prompt_pos: str = "glass bottle, high quality",
+              prompt_pos: str = "Create a vivid and detailed scene of a serene beach scene, featuring a young girl with a bright smile, a sunset, and a group of friends. Include elements like waves, sand, the sky, and the sound of the ocean. Make sure to capture the beauty and tranquility of the setting.",
               prompt_neg: str = "face asymmetry, eyes asymmetry, deformed eyes, open mouth"
               ):
     
