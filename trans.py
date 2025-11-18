@@ -15,7 +15,7 @@ from utils import download_model # type: ignore
 
 def gen_trans(width: int = 1024,
               height: int = 1024,
-              prompt_pos: str = "Create a vivid and detailed scene of a serene beach scene, featuring a young girl with a bright smile, a sunset, and a group of friends. Include elements like waves, sand, the sky, and the sound of the ocean. Make sure to capture the beauty and tranquility of the setting.",
+              prompt_pos: str = "",
               prompt_neg: str = "face asymmetry, eyes asymmetry, deformed eyes, open mouth"
               ):
     
@@ -36,9 +36,9 @@ def gen_trans(width: int = 1024,
     text_encoder_2 = CLIPTextModel.from_pretrained(
         sdxl_name, subfolder="text_encoder_2", dtype=torch.float16, variant="fp16")
     vae = AutoencoderKL.from_pretrained(
-        sdxl_name, subfolder="vae", dtype=torch.float16, variant="fp16")
+        sdxl_name, subfolder="vae", torch_dtype=torch.float16, variant="fp16")
     unet = UNet2DConditionModel.from_pretrained(
-        sdxl_name, subfolder="unet", dtype=torch.float16, variant="fp16")
+        sdxl_name, subfolder="unet", torch_dtype=torch.float16, variant="fp16")
 
     # Download Model
     path_ld_diffusers_sdxl_attn = download_model(
@@ -121,5 +121,14 @@ def gen_trans(width: int = 1024,
 if __name__ == "__main__":
     # 确保 static 目录存在
     os.makedirs("./static", exist_ok=True)
-    # 保存文件
-    gen_trans()[0].save("./static/test.png")
+    print("input your prompt:", end='')
+    prompt = input().strip()
+    if not prompt:
+        print("Prompt cannot be empty.")
+        exit(1)
+    try:
+        # 保存文件
+        gen_trans(prompt_pos=prompt)[0].save("./static/test.png")
+        print("Image saved to ./static/test.png")
+    except Exception as e:
+        print(f"failed to generate: {e}")
