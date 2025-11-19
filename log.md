@@ -17,3 +17,9 @@ version_02: Create a vivid and detailed scene of a serene beach scene, featuring
 
 version_03: a young girl with a bright smile
 
+提示词中只能出现一个主体，最多加上紧密附属于主体的客体
+
+
+论文《Transparent Image Layer Diffusion using Latent Transparency》中的提示词总结
+
+
