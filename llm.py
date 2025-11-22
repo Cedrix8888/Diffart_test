@@ -19,30 +19,50 @@ def llm_split_layers(user_prompt: str, width: int = 1024, height: int = 1024) ->
     """
     
     # Parse LLM output
+    layers_str = ""
     try:
         # Step 1: Get the JSON format string from LLM output
         layers_str = gemma_split(user_prompt, system_prompt)
+        
+        # Strip Markdown code block if present
+        if layers_str.startswith("```json") and layers_str.endswith("```"):
+            layers_str = layers_str[7:-3].strip()
+            
         # Step 2: Parse the JSON string into Python data (list of dictionaries)
         layers = json.loads(layers_str)
         
         # Step 3: Strictly validate types (compatible with Python 3.6+, and ensure it's a "list of dictionaries")
         if not isinstance(layers, list):
             raise ValueError("LLM output format error, not parsed as list")
-        for item in layers:
+        for idx, item in enumerate(layers):
             if not isinstance(item, dict):
-                raise ValueError("LLM output format error, list elements must be dictionaries")
+                raise ValueError(f"The {idx+1}th element in the list is not a dictionary")
+            # Optional: Validate that the dictionary contains the required 4 keys
+            required_keys = {"pos_prompt", "neg_prompt", "x", "y"}
+            missing_keys = required_keys - item.keys()
+            if missing_keys:
+                raise ValueError(f"Dictionary missing required keys: {missing_keys}")
+            # Optional: Validate that x/y are integers and within legal range
+            if not (isinstance(item["x"], int) and 0 <= item["x"] <= width):
+                raise ValueError(f"x coordinate is invalid (value: {item['x']}, range: 0~{width})")
+            if not (isinstance(item["y"], int) and 0 <= item["y"] <= height):
+                raise ValueError(f"y coordinate is invalid (value: {item['y']}, range: 0~{height})")
         
         return layers
     
-    # Catch all possible exceptions (JSON parsing errors, type errors, function call errors, etc.)
+    # Catch all possible exceptions (JSON parsing errors, value errors, etc.)
+    except json.JSONDecodeError as e:
+        print(f"JSON parsing error: {str(e)}, LLM output: {layers_str}")
+    except ValueError as e:
+        print(f"Data format validation error: {str(e)}, LLM output: {layers_str}")
     except Exception as e:
-        # Fallback: return default layer configuration
-        print(f"LLM output format error: {str(e)}, using default layer configuration")
-        print("LLM output was:", layers_str)
-        return [
-            {"pos_prompt": "Gradient background, simple", "neg_prompt": "", "x": 0, "y": 0},
-            {"pos_prompt": user_prompt, "neg_prompt": "", "x": 100, "y": 100}
-        ]
+        # Catch-all for other unexpected exceptions
+        print(f"Unknown error: {str(e)}, LLM output: {layers_str}")
+        
+    return [
+        {"pos_prompt": "Gradient background, simple", "neg_prompt": "complex, text, patterns", "x": 0, "y": 0},
+        {"pos_prompt": user_prompt, "neg_prompt": "blurry, deformed, extra elements", "x": 100, "y": 100}
+    ]
         
 if __name__ == "__main__":
     # Test the llm_split_layers function
