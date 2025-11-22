@@ -1,6 +1,7 @@
 import os
 from torch.hub import download_url_to_file
 from psd_tools import PSDImage
+from psd_tools.api.layers import PixelLayer
 
 
 # download model from URL to local path
@@ -39,22 +40,24 @@ def create_psd(layer_results: list[dict], output_path: str) -> None:
         rgba_image = layer_info["img"]  # Fixed: Use "img" instead of "image"
         layer_x = layer_info["x"]
         layer_y = layer_info["y"]
-        layer_name = layer_info["name"]
+        layer_name = layer_info["pos_prompt"]
         
         if rgba_image is None or rgba_image.mode != "RGBA":
             raise ValueError(f"Invalid RGBA image for layer '{layer_name}': mode={rgba_image.mode if rgba_image else None}")
         
-        # Create a new PSD image as a layer      
-        layer_psd = PSDImage.frompil(rgba_image)
-        
-        # Get the layer and set its position and name
-        layer = layer_psd[0]  # PSDImage.frompil 创建的PSD只有一个图层
-        layer.left = layer_x
-        layer.top = layer_y
-        layer.name = layer_name
-        
-        # Add to main PSD
-        psd.append(layer)
+        try:
+            # 创建图层：image=PIL图像, name=图层名, left/top=位置, blend_mode=混合模式
+            layer = PixelLayer.frompil(
+                parent=psd,
+                image=rgba_image,
+                name=layer_name,
+                top=layer_y,
+                left=layer_x,
+            )
+            # 添加到主PSD
+            psd.append(layer)
+        except Exception as e:
+            raise RuntimeError(f"Failed to create layer for '{layer_name}'") from e
     
     psd.save(output_path)
     print(f"The PSD file has been saved to: {output_path}")
