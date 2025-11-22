@@ -55,6 +55,7 @@ class TransparentImageGenerator:
             local_path="./models/ld_diffusers_sdxl_attn.safetensors"
         )
         sd_offset = sf.load_file(unet_offset_path)
+        sd_offset = {k: v.to(self.device) for k, v in sd_offset.items()}  # 转移到CUDA
         sd_origin = self.unet.state_dict()
         sd_merged = {k: sd_origin[k] + sd_offset[k] if k in sd_offset else sd_origin[k] for k in sd_origin.keys()}
         self.unet.load_state_dict(sd_merged, strict=True)
