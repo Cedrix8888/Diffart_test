@@ -9,6 +9,7 @@ def llm_split_layers(user_prompt: str, width: int = 1024, height: int = 1024) ->
     2. neg_prompt: the negative prompt for this layer (such as "blurry, deformed, extra elements")
     3. x: integer, the x coordinate of the layer's top-left corner (relative to the canvas top-left, range 0~canvas width, reasonably allocate position according to design)
     4. y: integer, the y coordinate of the layer's top-left corner (relative to the canvas top-left, range 0~canvas height, reasonably allocate position according to design)
+    You should make sure every pos_prompt contains only one subject or element, and avoid multiple elements in one layer.
     Output format must be a dictionary array, without any other text, example:
     [
         {{"pos_prompt": "Light blue gradient background, simple without clutter, cartoon style", "neg_prompt": "Complex texture, text, patterns", "x": 0, "y": 0}},
@@ -41,3 +42,9 @@ def llm_split_layers(user_prompt: str, width: int = 1024, height: int = 1024) ->
             {"pos_prompt": "Gradient background, simple", "neg_prompt": "", "x": 0, "y": 0},
             {"pos_prompt": user_prompt, "neg_prompt": "", "x": 100, "y": 100}
         ]
+        
+if __name__ == "__main__":
+    # Test the llm_split_layers function
+    user_prompt = "A poster with a light blue gradient background, featuring a cute cartoon white cat sitting in the center, wearing a small red bow."
+    layers = llm_split_layers(user_prompt, width=1024, height=1024)
+    print(layers)
