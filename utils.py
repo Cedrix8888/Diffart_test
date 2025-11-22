@@ -36,10 +36,13 @@ def create_psd(layer_results: list[dict], output_path: str) -> None:
     psd = PSDImage.new(mode="RGBA", size=(canvas_width, canvas_height))
     
     for layer_info in layer_results:
-        rgba_image = layer_info["image"]
+        rgba_image = layer_info["img"]  # Fixed: Use "img" instead of "image"
         layer_x = layer_info["x"]
         layer_y = layer_info["y"]
         layer_name = layer_info["name"]
+        
+        if rgba_image is None or rgba_image.mode != "RGBA":
+            raise ValueError(f"Invalid RGBA image for layer '{layer_name}': mode={rgba_image.mode if rgba_image else None}")
         
         # Create a new PSD image as a layer      
         layer_psd = PSDImage.frompil(rgba_image)

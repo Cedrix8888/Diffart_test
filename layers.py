@@ -26,7 +26,7 @@ class Layer:
     
 class Layer_Result:
     id : int
-    name: str
+    pos_prompt: str
     img: Image.Image
     width: int
     height: int
@@ -34,9 +34,9 @@ class Layer_Result:
     y: int
     seed: int
     
-    def __init__(self, id, name, img, x, y, width, height, seed):
+    def __init__(self, id, pos_prompt, img, x, y, width, height, seed):
         self.id = id
-        self.name = name
+        self.pos_prompt = pos_prompt
         self.img = img
         self.width = width
         self.height = height
@@ -159,7 +159,7 @@ def gen_trans(layers: list[dict] = [vars(Layer())],
             
             layer_result = Layer_Result(
                 id = f"layer_{idx}",
-                name = f"Layer {idx+1}: {pos_prompt[:20]}...",
+                pos_prompt = pos_prompt,
                 img = rgba_image,
                 x = layer_x,
                 y = layer_y,
@@ -168,5 +168,5 @@ def gen_trans(layers: list[dict] = [vars(Layer())],
                 seed = seed
             )
             layer_results.append(vars(layer_result))
-    
+            print(f"layer {idx} finished")
     return layer_results
