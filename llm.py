@@ -38,6 +38,7 @@ def llm_split_layers(user_prompt: str, width: int = 1024, height: int = 1024) ->
     except Exception as e:
         # Fallback: return default layer configuration
         print(f"LLM output format error: {str(e)}, using default layer configuration")
+        print("LLM output was:", layers_str)
         return [
             {"pos_prompt": "Gradient background, simple", "neg_prompt": "", "x": 0, "y": 0},
             {"pos_prompt": user_prompt, "neg_prompt": "", "x": 100, "y": 100}
