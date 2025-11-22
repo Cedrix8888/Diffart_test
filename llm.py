@@ -1,43 +1,43 @@
 import json
-from qwen import qwen_split
+from gemma import gemma_split
 
 def llm_split_layers(user_prompt: str, width: int = 1024, height: int = 1024) -> list[dict]:
 
     system_prompt = f"""
-    你是一个海报图层拆分助手，海报高度为{height}px, 海报宽度为{width}px, 你需要将用户的海报需求拆分为3-5个独立图层（每个图层对应一个元素），每个图层包含：
-    1. pos_prompt：该图层元素的正向提示词（详细描述风格、颜色、形状）
-    2. neg_prompt：该图层的负向提示词（如“模糊、变形、多余元素”）
-    3. x：整数，图层左上角x坐标（相对于画布左上角，范围0~画布的宽度，根据设计合理分配位置）
-    4. y：整数，图层左上角y坐标（相对于画布左上角，范围0~画布的高度，根据设计合理分配位置）
-    输出格式必须是字典数组，不包含任何其他文字，示例：
+    You are a poster layer splitting assistant, poster height is {height}px, poster width is {width}px, you need to split the user's poster requirements into 3-5 independent layers (each layer corresponds to an element), each layer includes:
+    1. pos_prompt: the positive prompt for this layer's element (detailed description of style, color, shape)
+    2. neg_prompt: the negative prompt for this layer (such as "blurry, deformed, extra elements")
+    3. x: integer, the x coordinate of the layer's top-left corner (relative to the canvas top-left, range 0~canvas width, reasonably allocate position according to design)
+    4. y: integer, the y coordinate of the layer's top-left corner (relative to the canvas top-left, range 0~canvas height, reasonably allocate position according to design)
+    Output format must be a dictionary array, without any other text, example:
     [
-        {"pos_prompt": "淡蓝色渐变背景，简洁无杂物，卡通风格", "neg_prompt": "纹理复杂、文字、图案", "x": 0, "y": 0},
-        {"pos_prompt": "卡通风格的白色猫，坐姿，表情可爱", "neg_prompt": "写实、模糊、多只猫", "x": 200, "y": 200},
-        {"pos_prompt": "小巧的红色蝴蝶结，卡通风格", "neg_prompt": "过大、模糊、彩色", "x": 800, "y": 100}
+        {{"pos_prompt": "Light blue gradient background, simple without clutter, cartoon style", "neg_prompt": "Complex texture, text, patterns", "x": 0, "y": 0}},
+        {{"pos_prompt": "Cartoon style white cat, sitting pose, cute expression", "neg_prompt": "Realistic, blurry, multiple cats", "x": 200, "y": 200}},
+        {{"pos_prompt": "Small red bow, cartoon style", "neg_prompt": "Too large, blurry, colorful", "x": 800, "y": 100}}
     ]
     """
     
-    # 解析LLM输出
+    # Parse LLM output
     try:
-        # 步骤1：获取 LLM 输出的 JSON 格式字符串
-        layers_str = qwen_split(user_prompt)
-        # 步骤2：解析 JSON 字符串为 Python 数据（列表嵌套字典）
+        # Step 1: Get the JSON format string from LLM output
+        layers_str = gemma_split(user_prompt, system_prompt)
+        # Step 2: Parse the JSON string into Python data (list of dictionaries)
         layers = json.loads(layers_str)
         
-        # 步骤3：严格校验类型（兼容 Python 3.6+，且确保是「字典列表」）
+        # Step 3: Strictly validate types (compatible with Python 3.6+, and ensure it's a "list of dictionaries")
         if not isinstance(layers, list):
-            raise ValueError("LLM输出格式错误，未解析为列表")
+            raise ValueError("LLM output format error, not parsed as list")
         for item in layers:
             if not isinstance(item, dict):
-                raise ValueError("LLM输出格式错误，列表元素必须是字典")
+                raise ValueError("LLM output format error, list elements must be dictionaries")
         
         return layers
     
-    # 捕获所有可能的异常（JSON解析错误、类型错误、函数调用错误等）
+    # Catch all possible exceptions (JSON parsing errors, type errors, function call errors, etc.)
     except Exception as e:
-        # 降级方案：返回默认图层配置
-        print(f"LLM输出格式错误：{str(e)}，使用默认图层配置")
+        # Fallback: return default layer configuration
+        print(f"LLM output format error: {str(e)}, using default layer configuration")
         return [
-            {"pos_prompt": "渐变背景，简洁", "neg_prompt": "", "x": 0, "y": 0},
+            {"pos_prompt": "Gradient background, simple", "neg_prompt": "", "x": 0, "y": 0},
             {"pos_prompt": user_prompt, "neg_prompt": "", "x": 100, "y": 100}
         ]

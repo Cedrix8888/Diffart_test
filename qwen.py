@@ -126,7 +126,7 @@ def qwen_split(
     except ValueError:
         index = 0
 
-    thinking_content: str = tokenizer.decode(output_ids[:index], skip_special_tokens=True).strip("\n")
+    # thinking_content: str = tokenizer.decode(output_ids[:index], skip_special_tokens=True).strip("\n")
     content: str = tokenizer.decode(output_ids[index:], skip_special_tokens=True).strip("\n")
     
     # 返回字典形式的结果
