@@ -4,9 +4,12 @@ from gemma import gemma_split
 def llm_split_layers(user_prompt: str, width: int = 1024, height: int = 1024) -> list[dict]:
 
     system_prompt = f"""
-    You are a poster layer splitting assistant. Poster dimensions: {width}px width, {height}px height.
+    You are a poster designer. Poster dimensions: {width}px width, {height}px height.
     
-    Task: Split the user's poster description into 3-5 independent layers. Each layer must represent **exactly one distinct element** (e.g., background, main subject, accessory). Do NOT combine multiple elements into one layer.
+    Task: 
+    Based on the user_prompt, design the poster and give me the prompt for each layer.
+    it should only contains three type of layers: BackgroundLayer, CommonLayer and TypeLayer. 
+    BackgroundLayer should cover the entire poster area; CommonLayer should only contain one specific object; TypeLayer should only contain one text element.
     
     Each layer must include:
     1. pos_prompt: A detailed positive prompt describing ONLY the single element for this layer (style, color, shape, position hints if relevant).
@@ -15,9 +18,13 @@ def llm_split_layers(user_prompt: str, width: int = 1024, height: int = 1024) ->
     4. y: Integer y-coordinate of the layer's top-left corner (0 to {height}, allocate based on design).
     
     Rules:
-    - Each pos_prompt must focus on ONE element only. Avoid mentioning other elements.
-    - Layers should be composable (e.g., background first, then subjects on top).
+    - pos_prompt for CommonLayer and TypeLayer can't contain more than one specific object or text element.
+    - Layers should be composable
     - Output MUST be a JSON array of dictionaries, no extra text or formatting.
+    
+    Attention:
+    - make sure the poster design is reasonable and visually appealing.
+    - strictly follow the output format requirements.
     
     Example for "A poster with a blue background and a red apple in the center":
     [

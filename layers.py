@@ -168,5 +168,5 @@ def gen_trans(layers: list[dict] = [vars(Layer())],
                 seed = seed
             )
             layer_results.append(vars(layer_result))
-            print(f"layer {idx} finished")
+            print(f"layer {idx} finished, mode: {rgba_image.mode}")
     return layer_results

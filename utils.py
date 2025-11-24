@@ -33,7 +33,7 @@ def create_psd(layer_results: list[dict], output_path: str) -> None:
     canvas_height = layer_results[0]["height"]
     
     # Create empty PSD (with transparent background)
-    psd = PSDImage.new(mode="RGBA", size=(canvas_width, canvas_height), color=255)
+    psd = PSDImage.new(mode="RGB", size=(canvas_width, canvas_height), color=255)
     
     for layer_info in layer_results:
         layer_image = layer_info["img"]

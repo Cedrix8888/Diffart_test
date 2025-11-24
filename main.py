@@ -12,8 +12,8 @@ def main():
     
     user_prompt = "A marketing poster for Coca-Cola"
     
-    # Step 1: Split the prompt into layers using LLM
-    print("Splitting prompt into layers...")
+    # Step 1: Generate prompts for each layer based on the given prompt.
+    print("Generating prompt for each layer respectively...")
     layers = llm_split_layers(user_prompt, width=1024, height=1024)
     if not layers:
         print("Failed to generate layers. Exiting.")
@@ -21,7 +21,7 @@ def main():
     print(f"Prepared {len(layers)} layers")
     
     # Step 2: Generate images for each layer
-    print("Generating layer images...")
+    print("Generating layer images...(PixelLayer_RGBA)")
     layer_results = gen_trans(layers=layers, width=1024, height=1024)
     print(f"Generated {len(layer_results)} layer images.")
     
