@@ -36,10 +36,10 @@ def main():
         print(f"Saved layer {layer_id} to {img_path}")
     
     # Step 3: Composite into PSD
-    output_path = "./static/output.psd"
+    output_path = "./static"
     print("Compositing into PSD...")
     create_psd(layer_results, output_path)
-    print(f"Pipeline complete! PSD saved to {output_path}")
+    print(f"Pipeline complete! PSD saved to {output_path}.psd and {output_path}.png")
 
 if __name__ == "__main__":
     main()

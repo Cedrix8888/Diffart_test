@@ -43,8 +43,8 @@ def create_psd(layer_results: list[dict], output_path: str) -> None:
         
         
         # Create a new pixel_layer
-        psd.create_pixel_layer(name=layer_name, image=layer_image, top=layer_y, left=layer_x)
-        
+        psd.create_pixel_layer(image=layer_image, name=layer_name, top=layer_y, left=layer_x)
     
-    psd.save(output_path)
+    psd.composite().save(output_path + ".png")    
+    psd.save(output_path + ".psd")
     print(f"The PSD file has been saved to: {output_path}")
