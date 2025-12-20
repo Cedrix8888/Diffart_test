@@ -10,6 +10,11 @@ pipe = StableDiffusionXLPipeline.from_pretrained(
 )
 
 pipe = pipe.to("cuda")
+pipe.enable_xformers_memory_efficient_attention()
+lora_path = "lora/aesthetic_anime_v1s.safetensors"
+pipe.load_lora_weights(lora_path, adapter_name="aesthetic_anime", prefix=None)
+pipe.set_adapters(adapter_names=["aesthetic_anime"], adapter_weights=[0.8])
+pipe.fuse_lora()
 
 prompt = "Astronaut in a jungle, cold color palette, muted colors, detailed, 8k"
 

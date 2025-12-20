@@ -76,7 +76,8 @@ def gemma(
     }
 
 def gemma_split(user_prompt: str, system_prompt: str) -> str:
-        # 项目内模型存储路径（与代码文件同级的 models 文件夹）
+    
+    # 项目内模型存储路径（与代码文件同级的 models 文件夹）
     model_cache_dir = os.path.join(os.path.dirname(__file__), "models")
     # 如果文件夹不存在则自动创建
     os.makedirs(model_cache_dir, exist_ok=True)

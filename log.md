@@ -23,3 +23,5 @@ version_03: a young girl with a bright smile
 论文《Transparent Image Layer Diffusion using Latent Transparency》中的提示词总结
 
 
+# Stylized Generation
+1. put extra styled words into sdxl prompt(using single sdxl_base_1.0)
